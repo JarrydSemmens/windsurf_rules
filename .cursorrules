@@ -1,0 +1,390 @@
+# Cursor Rules for Jarryd Adaens
+
+This workspace contains technology-specific coding rules. The rules are organized in separate markdown files for maintainability, but key rules are included here for immediate application.
+
+## Rules Files Reference
+
+For detailed rules, see these files in this workspace:
+- `global_rules.md` - General coding principles
+- `csharp_rules.md` - C# coding standards
+- `cplusplus_rules.md` - Unreal Engine C++ best practices
+- `wpf_rules.md` - WPF/XAML coding standards
+- `qt_rules.md` - Qt C++ rules for Windows development
+
+---
+
+# General Coding Principles
+
+Your overarching goal is to produce code that is clean, efficient, and maintainable. You should always strive for readability, simplicity, and modularity, regardless of the programming language or context. Provide solutions in a supportive manner, ensuring that your recommendations are both actionable and adaptable. Avoid unnecessary complexity: keep your code open to iteration and future growth while preserving its clarity. Building upon these guiding principles, remember to respect language idioms, choose intuitive naming conventions, and consider best practices for error handling and testing from the outset. Whenever possible, aim for solutions that balance clarity with performance, factoring in future scalability and maintainability.
+
+## General
+- This is a public repository, so please be respectful of others and make sure the content makes sense to others.
+- Clarity Over Brevity: Favor understandable code over clever tricks. Prioritize legibility and maintainability over saving a few lines.
+- When fixing linting issues use the tools intended for this instead of trying to edit files yourself, directly.
+- Adhere to the principle of DRY (Don't Repeat Yourself) when writing anything in this repository, code or text. Keep this in mind when reviewing files as well.
+- Never say something without being certain. Always check your sources--after all you're free to look at the entire repository freely.
+- Don't update documentation and description until after the behavior you're describing is actually saved into the repository.
+- Always code in American English.
+- Code should be understandable at a glance, making it more approachable for collaborators and your future self. Avoid obfuscation or over-optimization that sacrifices readability.
+- Plan for growth and changing requirements, but do not overengineer. Keep your design flexible enough to adapt without complicating the initial implementation.
+- Write straightforward code that conveys its intent clearly. Minimize abstraction layers that obscure readability.
+- Use meaningful, consistent names for variables, functions, classes, and modules that reflect their purpose.
+- Comment thoughtfully. Provide comments or docstrings where necessary, but avoid restating what the code already expresses.
+- Encapsulate Complexity. Group related logic into self-contained modules or classes with clear, well-documented interfaces.
+- Loose coupling. Design components to function independently, using abstraction layers or interfaces to reduce interdependencies.
+- Adhere to SOLID principles.
+- Apply DRY principles. Refactor repetitive or duplicated code into shared utilities or functions to promote reuse and reduce bloat.
+- Design for Extensibility. Structure your codebase so you can add new features and functionalities without requiring major rewrites.
+
+## Core System Components
+- The main application logic is in source/.
+- Feature flags and configuration settings are in source/config.
+- Scripts are always in scripts/.
+- Binary assets are always in content/. (Examples of binary assets: image files such as .png, .jpg, .bmp, audio files such as .wav, .mp3, .ogg)
+
+## Git
+- Always write in American English.
+- Small, focused PRs. No cross-cutting refactors with feature work.
+- Commit prefix:
+  - `Added:` feature name
+  - `Fixed:` bug + file
+  - `Changed:` refactor + subsystem
+  - `Removed:` dead code
+- Messages ≤72 chars subject, body optional.
+
+---
+
+# C# Coding Rules
+
+We use Microsoft's C# coding conventions with some modifications.
+
+## Scope
+- Applies to all C# in this workspace.
+- Intent: readability, consistency, modern C#.
+
+## Language
+- Prefer modern features. Avoid obsolete constructs.
+- Catch only exceptions you can handle. Don't catch `System.Exception` without a filter.
+- Use async/await for I/O-bound work.
+- Use C# keywords for built-in types: `string`, `int`, etc. (incl. `nint`, `nuint`).
+- Use `int` unless unsigned semantics are required.
+- Use `var` only when the RHS makes the type obvious; otherwise spell the type.
+- Prefer string interpolation; use `StringBuilder` for large/loop appends. Prefer raw string literals when helpful.
+- Use `using` statements (including declaration form) instead of `try/finally` for `Dispose`.
+- Use `&&` and `||` for comparisons (short-circuit).
+- Use concise `new()` forms when the variable type matches. Use object/collection initializers.
+- Use lambdas for event handlers you won't remove.
+- Call static members via the type name.
+- LINQ: meaningful range/result names, alias anonymous properties, rename ambiguous properties; use implicit typing in queries.
+
+## Using directives
+- Place `using` directives **outside** namespaces. Use `global::` if needed.
+
+## Style and Layout
+- Indent with 4 spaces. No tabs.
+- Allman braces: `{` and `}` on their own lines.
+- One statement per line. One declaration per line.
+- Add a blank line between members. Indent continuation lines by one level.
+- Use parentheses to make precedence clear when needed.
+
+## Comments
+- Use `//` for short explanations. Avoid block comments for long prose; move prose to docs.
+- XML doc comments for public APIs. Start with uppercase, end with a period; one space after `//`.
+
+## Naming
+- PascalCase: namespaces, types, all public/protected members, and local functions.
+- Interfaces start with `I`; attribute types end with `Attribute`.
+- Enums: singular for non-flags; plural for flags.
+- Avoid `__` (double underscore); reserved for compiler. Prefer clear, descriptive names. Avoid unclear acronyms.
+- Locals: camelCase.
+- Constants: **PascalCase** (fields and local const).
+- Private instance fields: `_camelCase`. Private/internal static fields: `s_`. Thread-static: `t_`.
+- Primary constructors: classes/structs use camelCase parameters; records use PascalCase (they become public props).
+- Avoid single-letter names except simple loop counters.
+- Parameters: camelCase with the prefix `in_`.
+
+## Do Not
+- Don't place using inside namespaces.
+- Don't overuse var when the type is unclear.
+- Don't catch broad exceptions without handling.
+
+---
+
+# Unreal C++ Coding Rules
+
+Target: UE 5.x C++ projects. Align with Epic's standard.
+
+## Scope
+- Applies to all C++ in this workspace (engine modules, game modules, plugins).
+- Goal: readable, consistent UE-idiomatic code that compiles fast and plays well with UHT/UBT.
+
+## Language & Types
+- Prefer UE fixed-width types where size matters: `int32`, `uint8`, `int64`, etc. Use plain `int` only when width is irrelevant.
+- Use `bool` for booleans. Do not assume size of `bool`.
+- Use `TCHAR` for character when interacting with UE text APIs.
+- Use `TEXT("...")` for string literals intended for UE types (`FString`, `FName`).
+- Standard Library: allowed when superior. Avoid mixing UE and STL idioms in the same API. Keep consistency within an API surface.
+
+## Naming
+- PascalCase for types, methods, and most identifiers.
+- UE type prefixes:
+  - `U` = `UObject` derived (`UActorComponent`)
+  - `A` = `AActor` derived
+  - `S` = Slate widget
+  - `F` = struct or non-UObject class
+  - `I` = pure interface
+  - `T` = template class
+  - `E` = enum type
+- Variables:
+  - Booleans start with `b` (`bIsVisible`, `bPendingDestroy`).
+  - Use descriptive nouns for data. Avoid cryptic acronyms.
+  - One declaration per line.
+- Functions:
+  - Boolean returns ask a question: `IsVisible()`, `ShouldClearBuffer()`.
+  - Procedures use strong verb + object: `ResetCache()`, `ApplySettings()`.
+  - Prefer explicit, descriptive names over abbreviations.
+- Parameters:
+  - Use `camelCase`.
+  - If a parameter is passed by non-const reference and is written to, prefix with `Out`: `OutResult`. If also boolean, `bOutSucceeded`.
+  - Optional team convention: input parameters may use the `in_` prefix (e.g., `int32 in_Count`). Note: this diverges from Epic's stock style; use consistently across your codebase if adopted.
+- Templates:
+  - Template type parameters may use `In` prefix to disambiguate (`template<typename InElementType>` then `using ElementType = InElementType;`).
+- Macros: ALL_CAPS with underscores, prefix with your project/module tag (e.g., `PROJECT_`, `YOURMODULE_`). Avoid `UE_`, which is reserved for Epic/engine.
+
+## Class Organization
+- Public interface first, then protected, then private.
+- Enforce encapsulation. Keep members private unless part of the intended API. Provide protected accessors if needed.
+- `final` for types not intended for inheritance.
+
+## Namespaces
+- Do **not** use namespaces for `UCLASS`, `USTRUCT`, `UENUM` declarations (UHT limitation).
+- Non-UObject public APIs may live in `YourProject::YourDomain::...`. Internal-only details may use `YourProject::YourDomain::Private::...`.
+- No `using` in global scope. `using` is OK within a namespace or function body.
+
+## Files & Includes
+- File names match their primary type names, including UE prefixes where applicable: e.g., `USceneComponent.h/.cpp` for `USceneComponent`.
+- All headers use `#pragma once`.
+- IWYU mindset:
+  - Forward-declare where possible in headers; include in `.cpp`.
+  - Include only what you use; avoid umbrella headers (don't include `Core.h`).
+  - Don't rely on transitive includes. Include everything you use directly.
+- Order:
+  - `.cpp`: include its own header first, then other includes.
+  - `.h`: `#include "ThisHeader.generated.h"` is the **last** include.
+- Modules: put public headers in `Public/`, internals in `Private/`.
+
+## Formatting
+- Tabs for indentation. Tab width 4. Spaces only for alignment after non-tab characters.
+- Allman braces: opening `{` on its own line for functions, control blocks, and class/structs.
+- Always use braces, even for single-statement blocks.
+- One statement per line.
+- Pointer/reference spacing: `Type* Ptr`, `Type& Ref` (one space to the right of `*` or `&`).
+- Leave a single blank line at end of file.
+
+## Control Flow
+- `if/else`: braces on all branches. `else if` aligned with `if`.
+- `switch`: every case breaks/returns or has an explicit `// falls through`. Always provide `default:`.
+- Minimize dependency distance. Initialize close to use. Split large functions into well-named helpers.
+
+## Strings & Text
+- Wrap UE string literals with `TEXT()`.
+- Prefer named constants over magic literals in calls. Example: `Trigger(ObjectName, CooldownSeconds, bCanInterrupt)`.
+
+## Logging & Asserts
+- Use `UE_LOG(Category, Verbosity, TEXT("..."))` for logging.
+- Use standard UE asserts (`check`, `ensureMsgf`) per project policy. Keep messages actionable.
+
+## UHT/Reflection Requirements
+- Use the correct UE prefixes (`U`, `A`, `F`, etc.) so UHT can recognize reflected types.
+- Reflection macros:
+  - Class/struct/enum declarations use `UCLASS`, `USTRUCT`, `UENUM`.
+  - Members exposed to UE use `UPROPERTY` with metadata where needed.
+  - Functions exposed to UE/Blueprint use `UFUNCTION` and, if needed, `UPARAM`.
+- Generated header include (`*.generated.h`) must be last in headers when working with Unreal Engine code.
+
+## Comments & Docs
+- U.S. English for code and comments.
+- Keep comments concise and accurate. Update when behavior changes.
+- Place variable documentation above the declaration. Optional blank lines to group variables.
+
+---
+
+# WPF XAML Coding Rules
+
+Targets WPF on .NET.
+
+## Scope
+- Applies to all XAML, code-behind, and view resources in this workspace.
+- Goal: readable, MVVM-friendly, consistent markup with predictable runtime behavior.
+
+## File & Project Layout
+- One view per file (`Window`, `UserControl`, `DataTemplate` in `*.xaml` with partial class in `*.xaml.cs`).
+- Keep resource dictionaries in `/Resources` (global) and `/Themes` for control libraries. Use `MergedDictionaries` for composition.
+- Public styles/templates live at App or Window scope; private styles local to the view.
+
+## Names, Namescopes, and Identifiers
+- Use `Name` for `FrameworkElement` descendants. Use `x:Name` when the type has no `Name` property (e.g., animations, brushes, templates).
+- Names must be unique per XAML namescope. Prefer stable, descriptive names (`CustomerList`, `SaveButton`). Avoid Hungarian.
+- Avoid naming elements that are not referenced by binding, animation, or code-behind.
+
+## Dependency Properties & Routed Events
+- Custom DP field: `<PropertyName>Property`, static `readonly DependencyProperty`, registered via `DependencyProperty.Register`. CLR wrapper is:
+  ```csharp
+  public T PropertyName
+  {
+      get => (T)GetValue(PropertyNameProperty);
+      set => SetValue(PropertyNameProperty, value);
+  }
+  ```
+- Supply metadata when behavior affects layout/measure (`AffectsRender`, `AffectsMeasure`) or needs callbacks (use `FrameworkPropertyMetadata`).
+- Prefer routed events for UI interactions that must bubble/tunnel across the tree. Use standard naming (`<Verb><Noun>`), and mark handled when appropriate.
+
+## Binding & MVVM
+- Set `DataContext` at the view root. No `ElementName` hops for app data unless necessary.
+- Use `{Binding Property}` form; omit `Path=` when simple. Explicit `Mode` only when different from default.
+- `TextBox.Text`: leave `UpdateSourceTrigger=LostFocus` unless you need real-time updates. Use `PropertyChanged` only when required.
+- Use `ICommand` for actions. No click-handlers for business logic in code-behind.
+- For templated bindings, prefer `TemplateBinding` or `RelativeSource TemplatedParent` where appropriate.
+- Use converters sparingly. Prefer view-model projection properties over complex converter graphs.
+
+## Resources, Styles, and Templates
+- Default to `{StaticResource}`. Use `{DynamicResource}` only when a value must change at runtime (theming, live palette).
+- No forward references with `{StaticResource}`. Define resources before use. If unavoidable, consider `{DynamicResource}`.
+- Use implicit styles for control-wide defaults; explicit styles for targets that need variations. Use `BasedOn` for inheritance.
+- Keep visual states and triggers inside control templates. Avoid heavy triggers for simple value transforms; use bindings or visual states.
+
+## Layout & Controls
+- Favor `Grid` for non-trivial layouts; name rows/columns in comments. Avoid deep nesting of `StackPanel` and `Grid`.
+- Use `ItemsControl`/`ListBox`/`ListView` with virtualization where possible. Prefer recycling mode:
+  - `VirtualizingPanel.IsVirtualizing="True"`
+  - `VirtualizingPanel.VirtualizationMode="Recycling"`
+  - `ScrollViewer.CanContentScroll="True"`
+  - Consider `VirtualizingPanel.IsVirtualizingWhenGrouping="True"` when grouping.
+- Keep `Margin` on child elements; avoid setting `Margin` on containers when it leaks into unrelated children.
+
+## Formatting Rules (Enforced)
+- Indentation: 2 spaces. No tabs in XAML.
+- One element per line. Self-close empty elements (`<Separator />`).
+- Attribute layout:
+  - Short elements: keep on one line if under ~120 chars.
+  - Otherwise: start tag on one line, attributes each on their own line, closing `>` on a new line.
+- Namespace order: `x:Class`, then `xmlns`, `xmlns:x`, then other `xmlns:*`.
+- Attribute order uses XAML Styler defaults. Keep key identity attrs first (`x:Key`, `x:Name`/`Name`, `x:Uid`).
+
+## Code-Behind
+- Keep code-behind minimal: view plumbing only (attached behaviors, minor UI glue). No business logic.
+- Use `partial` class with same root type. Event handlers should delegate to commands when possible.
+
+## Comments & Docs
+- Short `<!-- ... -->` comments above complex elements or groups. Avoid trailing comments on attribute lines.
+- Document non-obvious bindings, converters, and triggers.
+
+## Tooling
+- Use XAML Styler (or equivalent) with the attribute order above. Run on save and in CI.
+- Add analyzers for dead bindings and missing resources where available (e.g., WpfAnalyzers).
+- Use Live Visual Tree/Live Property Explorer and Snoop for runtime inspection.
+
+## Do Not
+- Don't use {DynamicResource} unless runtime changes are required.
+- Don't set DataContext deep in the tree without reason.
+- Don't put business logic in code-behind.
+- Don't forward-reference resources with {StaticResource}.
+- Don't disable virtualization on large lists; prefer recycling mode and `CanContentScroll="True"`.
+
+---
+
+# Qt C++ Rules (Windows, OpenRGB Plugin)
+
+## Scope and priority
+- Target: Qt Widgets–based C++ on Windows 11, MSVC toolchain, OpenRGB plugin code.
+- Applies to: Source, tests, build files (CMake/qmake).
+- Precedence: Project rules > Global rules > Tool defaults.
+
+## Build system
+- Prefer Qt 6 + CMake. Use `Qt6::` targets and `AUTOMOC`, `AUTORCC`, `AUTOUIC`.
+- If the project is on Qt 5 or upstream requires qmake, keep a thin `.pro` that mirrors CMake options.
+- Windows defaults: MSVC v143, Ninja generator, `/permissive-` `/Zc:__cplusplus`.
+
+## Tooling
+- **Formatting**: Use Qt's `_clang-format` as base. If absent, approximate: K&R, 4 spaces, 100 col width, attached braces except for function/class bodies.
+- **Static analysis**: Enable `/W4` `/WX-` and clang-tidy (checks: `-*,cppcoreguidelines-*,modernize-*,-modernize-use-trailing-return-type,performance-*`).
+- **IDEs**: Qt Creator or VS + "Qt VS Tools" are both allowed.
+
+## Language and API rules (Qt-conformant)
+- No exceptions. No RTTI (`dynamic_cast`, `typeid`) in production code.
+- Prefer C++ casts: `static_cast`, `const_cast`, `reinterpret_cast`.
+- Each `QObject` subclass must include `Q_OBJECT`.
+- Public headers: stable API, verbose parameter names, use `#pragma once`; avoid global objects with non-trivial constructors.
+
+## Ownership and lifetime
+- Use parent–child ownership for `QObject` trees. Never delete children manually; prefer `deleteLater()` across threads.
+- Do not combine smart-pointer ownership with `QObject` parenting. For non-`QObject` resources, use RAII (`std::unique_ptr`/`std::shared_ptr`) as usual.
+
+## Signals/slots
+- Use function-pointer syntax, not `SIGNAL`/`SLOT` strings:
+  ```cpp
+  connect(source, &Source::updated, this, &Target::onUpdated);
+  ```
+- For overloads, use `qOverload` or `static_cast`.
+- Use `Qt::UniqueConnection` where idempotence is required.
+- Cross-thread: rely on `Qt::AutoConnection` semantics; it becomes queued when crossing threads.
+
+## Threading
+- UI lives on the GUI thread. Offload polling or I/O to worker `QObjects` in `QThreads`.
+- Change thread affinity via `moveToThread`. Don't access a `QObject` from a foreign thread; signal it instead.
+- Use `QMetaObject::invokeMethod` with `Qt::QueuedConnection` for cross-thread calls.
+
+## Containers
+- Qt 6: `QVector` is an alias of `QList`. Use `QList` by default; prefer STL containers in pure algorithmic code where appropriate.
+- Use `QStringList` for string collections, `QHash` for key-value pairs, `QSet` for unique collections.
+
+## Strings
+- Store and pass strings as `QString` or `QStringView` for non-owning parameters.
+- Prefer compile-time string creation: `u"Text"_s` (Qt::Literals) or `QStringLiteral("Text")`.
+- Use translator macros for UI text: `tr("Battery")`.
+- For formatting, prefer `QString::arg()` over `sprintf`-style functions.
+
+## Formatting and naming
+- Indent 4 spaces. Max line 100.
+- Attached braces for control flow; brace on new line for function/class bodies only.
+- Types and classes: `UpperCamelCase`. Methods/variables: `lowerCamelCase`. Acronyms CamelCased (`QXmlStreamReader`).
+- One declaration per line. Avoid abbreviations.
+- Private members: prefix with `m_` (e.g., `m_batteryLevel`).
+
+## Build artifacts and defines
+- Define `QT_NO_KEYWORDS` to avoid `emit`/`slots`/`signals` macro collisions.
+- Public headers include form: `#include <QtCore/qstring.h>` when shipping public API; otherwise normal module includes are fine.
+- Use `Q_DECLARE_METATYPE` for custom types used in signals/slots or `QVariant`.
+
+## Plugin-specific (OpenRGB)
+- Don't block the UI with battery polling. Use `QTimer` or a worker object in a `QThread`.
+- Emit a debounced signal for state changes to avoid spamming RGB updates.
+- Keep any Windows API calls behind a narrow adapter class with clear lifetime and thread ownership.
+
+## Testing
+- Use `QtTest` for unit tests. Avoid GUI dependencies in tests; mock `QObject` emitters.
+- Use `QSignalSpy` for testing signal emissions.
+- Test files should follow the pattern `tst_classname.cpp`.
+
+## Enforcement
+- CI checks: build on MSVC Release+Debug, run clang-tidy, run QtTest.
+- PRs touching public headers must include usage examples and rationale.
+- Use `Q_DISABLE_COPY_MOVE` for classes that shouldn't be copied/moved.
+
+---
+
+## Technology Detection
+
+When working on code, apply rules based on file types:
+- **C# files** (`.cs`) → Apply C# rules + General principles
+- **C++ files** (`.cpp`, `.h`) in Unreal projects → Apply Unreal C++ rules + General principles
+- **XAML files** (`.xaml`) → Apply WPF rules + C# rules + General principles
+- **Qt C++ files** → Apply Qt C++ rules + General principles
+- **All files** → Always apply General principles as base
+
+## Notes
+
+- Rules files are versioned and dated - check the header of each file for version info
+- These rules are maintained in this repository: https://github.com/JarrydSemmens/windsurf_rules
+- When in doubt, prioritize clarity, maintainability, and consistency
+- Follow SOLID principles and DRY (Don't Repeat Yourself) as outlined in General principles
